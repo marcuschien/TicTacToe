@@ -1,3 +1,6 @@
+//Feature 2: Display location of each move
+//Feature 3: Make the board numpad compatible i.e. press a number to fill in that corresponding square
+//Enhancement 1: //Make StepNumber == 0 when restart game is clicked so the move buttons disappear and the appropriate message is displayed.
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -11,13 +14,14 @@ import './index.css';
     )
   }
 
-//See if you can make the board numpad compatible i.e. press a number to fill in that corresponding square
+
   class Board extends React.Component {
     renderSquare(i) {
       return (
         <Square 
           value={this.props.squares[i]}
           onClick={() => this.props.onClick(i)}
+          location={[(i%3),Math.ceil(i/3)]} //(Col, row)
         />
       );
     }
@@ -82,18 +86,21 @@ import './index.css';
       const winner = calculateWinner(current.squares);
 
       const moves = history.map((step, move) => {
-        const desc = move ? 'Go to move #' + move : 'Restart Game';
+        const desc = move ? 'Go to move #' + move : 'Restart Game'; 
         return (
           <li key={move}>
             <button onClick={() => this.jumpTo(move)}>{desc}</button>
           </li>
         );
-      });
+      }); 
       let status;
       if (winner) {
         status = 'Winner: ' + winner;
+      } else if(this.state.stepNumber == 9){
+        status = "Cat's Game"
       } else {
-        status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+        if (this.state.stepNumber==0) status = 'X goes first! Next player: O'
+        else status = (this.state.xIsNext ? 'O played on:' : 'X played on:') + 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
       }
       return (
         <div className="game">
